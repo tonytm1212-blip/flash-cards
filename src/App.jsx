@@ -109,6 +109,13 @@ function App() {
     setEditingBack(card.back);
   };
 
+  // Add this inside the App component:
+  const handleCancelEditCard = () => {
+    setEditingCardId(null);
+    setEditingFront('');
+    setEditingBack('');
+  };
+
   // Load user data when user changes
   useEffect(() => {
     if (isLoggedIn && currentUser) {
