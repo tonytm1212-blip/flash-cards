@@ -1094,3 +1094,12 @@ body, #root, .app-container {
 .dark-mode .stat-value {
   color: #a5d6a7;
 }
+
+.mobile-move-btns {
+  display: flex;
+  gap: 0.5em;
+  margin-top: 0.5em;
+  justify-content: center;
+  position: static;
+  z-index: 2;
+}

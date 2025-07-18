@@ -628,13 +628,13 @@ function App() {
                     {currentAvailableCard.back}
                   </div>
                 </div>
-                {isMobile() && (
-                  <div style={{ display: 'flex', gap: '0.5em', marginTop: '0.5em', justifyContent: 'center' }}>
-                    <button className="small-btn" onClick={e => { e.stopPropagation(); handleDrop({ preventDefault: () => {} }, 'knowIt', currentAvailableCard) }}>Move to Know it</button>
-                    <button className="small-btn" onClick={e => { e.stopPropagation(); handleDrop({ preventDefault: () => {} }, 'studyIt', currentAvailableCard) }}>Move to Study it</button>
-                  </div>
-                )}
               </div>
+              {isMobile() && (
+                <div className="mobile-move-btns">
+                  <button className="small-btn" onClick={e => { e.stopPropagation(); handleDrop({ preventDefault: () => {} }, 'knowIt', currentAvailableCard) }}>Move to Know it</button>
+                  <button className="small-btn" onClick={e => { e.stopPropagation(); handleDrop({ preventDefault: () => {} }, 'studyIt', currentAvailableCard) }}>Move to Study it</button>
+                </div>
+              )}
               <div className="card-navigation">
                 <button 
                   className="nav-btn" 
