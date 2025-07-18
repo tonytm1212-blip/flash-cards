@@ -116,6 +116,20 @@ function App() {
     setEditingBack('');
   };
 
+  // Add this inside the App component:
+  const handleSaveEditCard = (card, location) => {
+    if (location === 'Available') {
+      setFlashcards(prev => prev.map(f => f.id === card.id ? { ...f, front: editingFront, back: editingBack } : f));
+    } else if (location === 'Know it') {
+      setKnowItCards(prev => prev.map(f => f.id === card.id ? { ...f, front: editingFront, back: editingBack } : f));
+    } else if (location === 'Study it') {
+      setStudyItCards(prev => prev.map(f => f.id === card.id ? { ...f, front: editingFront, back: editingBack } : f));
+    }
+    setEditingCardId(null);
+    setEditingFront('');
+    setEditingBack('');
+  };
+
   // Load user data when user changes
   useEffect(() => {
     if (isLoggedIn && currentUser) {
