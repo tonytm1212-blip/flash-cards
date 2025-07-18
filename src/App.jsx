@@ -52,6 +52,9 @@ const getUsageStats = () => {
   return JSON.parse(localStorage.getItem(USAGE_STATS_KEY) || '{}')
 }
 
+// Helper to detect mobile
+const isMobile = () => /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent)
+
 function App() {
   // Login state
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -156,15 +159,16 @@ function App() {
   }
 
   // Handle drop with index updates
-  const handleDrop = (e, targetCategory) => {
-    e.preventDefault()
-    if (!draggedCard) return
+  const handleDrop = (e, targetCategory, cardOverride) => {
+    e.preventDefault && e.preventDefault()
+    const card = cardOverride || draggedCard
+    if (!card) return
 
-    console.log('Dropping card:', draggedCard.id, 'to category:', targetCategory)
-    console.log('Card subject:', draggedCard.subject, 'Current study subject:', studySubject)
+    console.log('Dropping card:', card.id, 'to category:', targetCategory)
+    console.log('Card subject:', card.subject, 'Current study subject:', studySubject)
 
     // Only allow dropping if the card subject matches the current study subject
-    if (draggedCard.subject !== studySubject) {
+    if (card.subject !== studySubject) {
       console.log('Card subject does not match study subject, ignoring drop')
       setDraggedCard(null)
       return
@@ -172,19 +176,19 @@ function App() {
 
     // Use a more robust approach - update all arrays in a single operation
     if (targetCategory === 'knowIt') {
-      setFlashcards(prev => prev.filter(c => c.id !== draggedCard.id))
+      setFlashcards(prev => prev.filter(c => c.id !== card.id))
       setKnowItCards(prev => {
-        const newCards = [...prev, draggedCard]
+        const newCards = [...prev, card]
         console.log('Added to knowItCards, new count:', newCards.length)
         setCurrentKnowItCardIndex(newCards.length - 1)
         return newCards
       })
-      setStudyItCards(prev => prev.filter(c => c.id !== draggedCard.id))
+      setStudyItCards(prev => prev.filter(c => c.id !== card.id))
     } else if (targetCategory === 'studyIt') {
-      setFlashcards(prev => prev.filter(c => c.id !== draggedCard.id))
-      setKnowItCards(prev => prev.filter(c => c.id !== draggedCard.id))
+      setFlashcards(prev => prev.filter(c => c.id !== card.id))
+      setKnowItCards(prev => prev.filter(c => c.id !== card.id))
       setStudyItCards(prev => {
-        const newCards = [...prev, draggedCard]
+        const newCards = [...prev, card]
         console.log('Added to studyItCards, new count:', newCards.length)
         setCurrentStudyItCardIndex(newCards.length - 1)
         return newCards
@@ -610,8 +614,8 @@ function App() {
             <div className="single-card-container">
               <div 
                 className={`available-card${flippedCards[currentAvailableCard.id] ? ' flipped' : ''}`}
-                draggable
-                onDragStart={(e) => handleDragStart(e, currentAvailableCard)}
+                draggable={!isMobile()}
+                onDragStart={isMobile() ? undefined : (e) => handleDragStart(e, currentAvailableCard)}
                 onClick={() => toggleCardFlip(currentAvailableCard.id)}
               >
                 <div className="card-inner">
@@ -624,6 +628,12 @@ function App() {
                     {currentAvailableCard.back}
                   </div>
                 </div>
+                {isMobile() && (
+                  <div style={{ display: 'flex', gap: '0.5em', marginTop: '0.5em', justifyContent: 'center' }}>
+                    <button className="small-btn" onClick={e => { e.stopPropagation(); handleDrop({ preventDefault: () => {} }, 'knowIt', currentAvailableCard) }}>Move to Know it</button>
+                    <button className="small-btn" onClick={e => { e.stopPropagation(); handleDrop({ preventDefault: () => {} }, 'studyIt', currentAvailableCard) }}>Move to Study it</button>
+                  </div>
+                )}
               </div>
               <div className="card-navigation">
                 <button 
