@@ -97,6 +97,11 @@ function App() {
   const [studyItCards, setStudyItCards] = useState([])
   const [draggedCard, setDraggedCard] = useState(null)
 
+  // Add state for editing card
+  const [editingCardId, setEditingCardId] = useState(null)
+  const [editingFront, setEditingFront] = useState('')
+  const [editingBack, setEditingBack] = useState('')
+
   // Load user data when user changes
   useEffect(() => {
     if (isLoggedIn && currentUser) {
@@ -519,20 +524,46 @@ function App() {
             ...studyItCards.filter(f => f.subject === createSubject).map(f => ({ ...f, location: 'Study it' }))
           ].map(f => (
             <li key={f.id} className="created-card">
-              <span className="created-front">{f.front}</span>
-              <span className="created-back">{f.back}</span>
-              <div className="card-location">
-                <span className="location-badge">{f.location}</span>
-              </div>
-              <div className="card-actions">
-                {f.location === 'Available' && (
-                  <>
-                    <button className="small-btn" onClick={() => addToCategory(f, 'knowIt')}>Know it</button>
-                    <button className="small-btn" onClick={() => addToCategory(f, 'studyIt')}>Study it</button>
-                  </>
-                )}
-                <button className="small-btn" onClick={() => handleDeleteFlashcard(f.id)}>Delete</button>
-              </div>
+              {editingCardId === f.id ? (
+                <>
+                  <input
+                    className="card-input"
+                    value={editingFront}
+                    onChange={e => setEditingFront(e.target.value)}
+                    placeholder="Front"
+                    style={{ marginBottom: '0.5em' }}
+                  />
+                  <input
+                    className="card-input"
+                    value={editingBack}
+                    onChange={e => setEditingBack(e.target.value)}
+                    placeholder="Back"
+                    style={{ marginBottom: '0.5em' }}
+                  />
+                  <div className="card-actions">
+                    <button className="small-btn" onClick={() => handleSaveEditCard(f, f.location)}>Save</button>
+                    <button className="small-btn" onClick={handleCancelEditCard}>Cancel</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="created-front">{f.front}</span>
+                  <span className="created-back">{f.back}</span>
+                  <div className="card-location">
+                    <span className="location-badge">{f.location}</span>
+                  </div>
+                  <div className="card-actions">
+                    {f.location === 'Available' && (
+                      <>
+                        <button className="small-btn" onClick={() => addToCategory(f, 'knowIt')}>Know it</button>
+                        <button className="small-btn" onClick={() => addToCategory(f, 'studyIt')}>Study it</button>
+                      </>
+                    )}
+                    <button className="small-btn" onClick={() => handleStartEditCard(f)}>Edit</button>
+                    <button className="small-btn" onClick={() => handleDeleteFlashcard(f.id)}>Delete</button>
+                  </div>
+                </>
+              )}
             </li>
           ))}
         </ul>
