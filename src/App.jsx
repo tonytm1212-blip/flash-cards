@@ -102,6 +102,13 @@ function App() {
   const [editingFront, setEditingFront] = useState('')
   const [editingBack, setEditingBack] = useState('')
 
+  // Fix: Add the missing edit handler
+  const handleStartEditCard = (card) => {
+    setEditingCardId(card.id);
+    setEditingFront(card.front);
+    setEditingBack(card.back);
+  };
+
   // Load user data when user changes
   useEffect(() => {
     if (isLoggedIn && currentUser) {
